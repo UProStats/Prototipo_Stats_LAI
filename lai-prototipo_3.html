@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LAI · Prototipo Deportes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#E91D2D; --red-dk:#8D0000; --red-deep:#6a0000;
+  --green:#00984C; --green-dk:#007E11; --gold:#FFD140; --ink:#231F20;
+  --bg:#F2F2F2; --card:#fff; --line:#E3E3E3; --muted:#6B6B6B; --text:#1A1A1A;
+  --cond:'Barlow Condensed','Arial Narrow',sans-serif; --sans:'Inter',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+.proto{background:var(--ink);color:#fff;font-size:12px;text-align:center;padding:6px 16px}
+.proto b{color:var(--gold)}
+
+/* ---------- header ---------- */
+header.top{background:var(--red-dk);color:#fff;position:sticky;top:0;z-index:60;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.hdr{display:flex;align-items:center;gap:16px;height:64px}
+@media(max-width:1180px){.brand .wm small{display:none}}
+.hub-body>*,.sh-grid>*{min-width:0}
+@media(max-width:640px){.hub-hd .ctl,.hub-hd .ctl .sel,.hub-hd .ctl select{width:100%;min-width:0}.hub-hd .wrap>div:first-child{min-width:0}.sh-strip{margin-left:0}.sec-h h2{font-size:20px}}
+html,body{overflow-x:hidden}
+@media(max-width:900px){nav.main{display:none}.burger{display:flex}.brand .wm{display:block}}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer}
+.brand svg{height:46px;width:auto;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3))}
+.brand .wm{font-family:var(--cond);font-weight:800;font-size:22px;line-height:1}
+.brand .wm small{display:block;font-size:11px;font-weight:600;opacity:.8;letter-spacing:.06em;text-transform:uppercase}
+nav.main{display:flex;height:100%;overflow-x:auto;scrollbar-width:none}
+nav.main::-webkit-scrollbar{display:none}
+nav.main a{display:flex;align-items:center;gap:6px;padding:0 11px;font-family:var(--cond);font-weight:700;font-size:15.5px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;opacity:.55;cursor:not-allowed;border-bottom:4px solid transparent;user-select:none}
+nav.main a.live{opacity:1;cursor:pointer}
+nav.main a.live:hover,nav.main a.open{background:rgba(255,255,255,.1)}
+nav.main a.on{border-bottom-color:var(--gold)}
+nav.main a .car{width:7px;height:7px;border-right:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(45deg) translateY(-2px)}
+.stripe{height:5px;background:linear-gradient(90deg,var(--red) 0 33.3%,var(--green) 33.3% 66.6%,var(--gold) 66.6%)}
+
+/* sports mega menu */
+.mega{position:absolute;left:0;right:0;top:100%;background:#fff;color:var(--text);box-shadow:0 12px 30px rgba(0,0,0,.2);display:none;border-top:3px solid var(--gold)}
+.mega.on{display:block}
+.mega .wrap{padding-top:18px;padding-bottom:22px}
+.mega h4{font-family:var(--cond);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px 24px}
+.ms{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border-radius:4px;font-weight:600;color:#aaa;cursor:not-allowed}
+.ms small{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.ms.live{color:var(--text);cursor:pointer;background:#fff5f5;border-left:3px solid var(--red)}
+.ms.live small{color:var(--red)}
+.ms.live:hover{background:var(--red);color:#fff}
+.ms.live:hover small{color:#fff}
+
+/* ---------- home score bar (NCAA style) ---------- */
+.sbar{background:#fff;border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.02)}
+.sbw{display:flex;align-items:stretch;height:84px;padding:0!important;max-width:none}
+.sb-sel{display:flex;align-items:center;padding:0 14px 0 max(16px,calc((100vw - 1240px)/2 + 16px));border-right:1px solid #e6e6e6;flex-shrink:0}
+.sel{position:relative;display:inline-block}
+.sel select{appearance:none;-webkit-appearance:none;border:1px solid #8c8c8c;border-radius:4px;background:#fff;padding:8px 32px 8px 12px;font-family:var(--cond);font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:.01em;cursor:pointer;width:184px}
+.sel:after{content:'';position:absolute;right:15px;top:50%;width:8px;height:8px;border-right:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.sel.dark select{background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.35);color:#fff}
+.sel.dark select option{color:#000}
+.sel.dark:after{border-color:#fff}
+.tk-list{display:flex;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;flex:1;min-width:0}
+.tk-list::-webkit-scrollbar{display:none}
+.tk{flex:0 0 auto;min-width:172px;padding:14px 18px 0;cursor:pointer;position:relative}
+.tk+.tk:before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:1px;background:#e6e6e6}
+.tk:hover .r .ab{text-decoration:underline}
+.tk .st{display:flex;align-items:center;gap:6px;font-family:var(--cond);font-size:12.5px;font-weight:500;color:#333;text-transform:uppercase;letter-spacing:.03em;margin-bottom:5px;white-space:nowrap}
+.tk .st .dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--red);display:inline-flex;align-items:center;justify-content:center}
+.tk .st .dot:after{content:'';width:4px;height:4px;border-radius:50%;background:var(--red)}
+.tk .r{display:flex;justify-content:space-between;align-items:center;gap:14px;height:22px;font-family:var(--cond);font-size:17px;font-weight:500;text-transform:uppercase;color:#1a1a1a}
+.tk .r .ab{display:flex;align-items:center;gap:8px}
+.tk .r .sc{font-variant-numeric:tabular-nums}
+.tk .r.l{color:#8a8a8a}
+.tk .r.w{font-weight:700}
+.tk-arr{flex:0 0 auto;width:44px;display:flex;align-items:center;justify-content:center;border-left:1px solid #e6e6e6;color:#444}
+.tk-arr:after{content:'';width:10px;height:10px;border-right:1.5px solid #444;border-bottom:1.5px solid #444;transform:rotate(-45deg);margin-left:-4px}
+.tk-arr:hover{background:#fafafa}
+.tk-all{flex:0 0 auto;display:flex;align-items:center;padding:0 max(16px,calc((100vw - 1240px)/2 + 16px)) 0 16px;border-left:1px solid #e6e6e6;font-family:var(--cond);font-size:14px;line-height:1.1;font-weight:500;text-transform:uppercase;color:var(--red-dk);letter-spacing:.02em;cursor:pointer;white-space:nowrap}
+.tk-all:hover{color:var(--red);text-decoration:underline}
+
+/* burger + drawer */
+.burger{display:none;width:42px;height:42px;margin-left:auto;align-items:center;justify-content:center;flex-direction:column;gap:5px;border-radius:4px}
+.burger span{display:block;width:24px;height:2.5px;background:#fff;border-radius:2px;transition:.2s}
+.burger.on span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.burger.on span:nth-child(2){opacity:0}
+.burger.on span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+.drawer{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;color:var(--text);box-shadow:0 14px 30px rgba(0,0,0,.25);max-height:calc(100vh - 100px);overflow:auto}
+.drawer.on{display:block}
+.drawer .di{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;border-bottom:1px solid #eee;font-family:var(--cond);font-weight:700;font-size:18px;text-transform:uppercase;letter-spacing:.03em;color:#aaa}
+.drawer .di.live{color:var(--ink);cursor:pointer}
+.drawer .di.on{box-shadow:inset 4px 0 0 var(--red)}
+.drawer .di small{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.05em;color:#bbb}
+.drawer .sub{display:none;background:#fafafa;border-bottom:1px solid #eee;padding:6px 0}
+.drawer .sub.on{display:block}
+.drawer .sub .ms{margin:2px 12px}
+.drawer .di .car2{width:8px;height:8px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg);transition:.2s}
+.drawer .di.open .car2{transform:rotate(-135deg)}
+
+/* powered by */
+.pby{display:inline-flex;align-items:center;gap:7px;font-family:var(--sans);font-size:10px;font-weight:600;color:#8a8a8a;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.pby img{height:18px;width:auto;display:block}
+.pbf{display:flex;justify-content:flex-end;padding:8px 14px;border-top:1px solid #f0f0f0}
+.pbrow{display:flex;justify-content:flex-end;margin:-6px 0 8px}
+.dark-pby .pby{color:rgba(255,255,255,.7)}.dark-pby .pby b{color:#fff}
+
+/* sport home */
+.sh-grid{display:grid;grid-template-columns:1fr 340px;gap:22px}
+.sh-hero{position:relative;border-radius:6px;overflow:hidden;min-height:300px;display:flex;align-items:flex-end;color:#fff;background:linear-gradient(135deg,#003d1f,var(--green-dk) 50%,#00200f)}
+.sh-hero.f{background:linear-gradient(135deg,var(--red-deep),var(--red-dk) 50%,#2a0000)}
+.sh-hero .mark{position:absolute;right:-30px;top:-20px;width:300px;opacity:.12}
+.sh-hero .txt{position:relative;padding:24px}
+.sh-hero h2{font-family:var(--cond);font-weight:800;font-size:38px;line-height:1;text-transform:uppercase;margin:8px 0}
+.sh-hero p{opacity:.9;max-width:520px}
+.sh-news{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.sh-strip{display:flex;overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:6px;margin-bottom:22px;scrollbar-width:none}
+.sh-strip .tk{padding-bottom:12px}
+
+/* ---------- home body ---------- */
+.home-grid{display:grid;grid-template-columns:1fr 340px;gap:22px;margin:22px auto}
+.hero{position:relative;border-radius:6px;overflow:hidden;min-height:360px;display:flex;align-items:flex-end;color:#fff;
+  background:radial-gradient(circle at 80% 20%,rgba(255,209,64,.25),transparent 40%),linear-gradient(135deg,#003d1f,var(--green-dk) 45%,#00200f)}
+.hero .mark{position:absolute;right:-40px;top:-30px;width:360px;opacity:.12}
+.hero .txt{position:relative;padding:28px;max-width:640px}
+.kicker{display:inline-block;background:var(--gold);color:var(--ink);font-family:var(--cond);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:2px;margin-bottom:12px}
+.hero h1{font-family:var(--cond);font-weight:800;font-size:44px;line-height:1;text-transform:uppercase;margin-bottom:10px}
+.hero p{font-size:15px;opacity:.9;margin-bottom:18px;max-width:520px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--red-dk);font-family:var(--cond);font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.04em;padding:10px 16px;border-radius:3px;cursor:pointer}
+.btn:hover{background:var(--gold);color:var(--ink)}
+.sec-h{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
+.sec-h h2{font-family:var(--cond);font-weight:800;font-size:22px;text-transform:uppercase;border-left:5px solid var(--red);padding-left:10px}
+.sec-h a{font-size:12px;font-weight:700;color:var(--red-dk);cursor:pointer}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:6px}
+.news{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.nc{background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden;cursor:not-allowed}
+.nc .img{height:120px;display:flex;align-items:center;justify-content:center}
+.nc .img span{font-family:var(--cond);font-size:46px;font-weight:800;color:rgba(255,255,255,.9)}
+.nc .b{padding:12px}
+.nc .sp{font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.nc h3{font-size:15px;line-height:1.3}
+.headlines li{list-style:none;padding:12px 14px;border-bottom:1px solid var(--line);font-weight:600;line-height:1.35;cursor:not-allowed}
+.headlines li:last-child{border-bottom:0}
+.headlines li small{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:3px}
+.inm{position:relative;overflow:hidden;border-radius:6px;background:linear-gradient(135deg,#1b1b1b,#3a2f12);color:#fff;padding:22px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.inm:before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,209,64,.06) 0 2px,transparent 2px 14px)}
+.inm>*{position:relative}
+.inm .k{font-family:var(--cond);color:var(--gold);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:13px}
+.inm h3{font-family:var(--cond);font-size:32px;text-transform:uppercase;line-height:1;margin:6px 0 8px}
+.inm p{opacity:.8;font-size:13px;max-width:560px}
+.inm .medal{width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b8,var(--gold) 45%,#a37b00);display:flex;align-items:center;justify-content:center;font-family:var(--cond);font-weight:800;color:#3a2a00;font-size:26px;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.inm .btn{margin-top:14px;cursor:not-allowed;opacity:.9}
+
+/* ---------- logos ---------- */
+.logo{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-family:var(--cond);font-weight:800;color:#fff;flex-shrink:0;letter-spacing:-.02em;line-height:1}
+.logo.sm{width:20px;height:20px}
+.logo.xs{width:16px;height:16px}
+
+/* ---------- sport hub ---------- */
+.hub-hd{background:linear-gradient(135deg,var(--red-deep),var(--red-dk) 60%,#b3111f);color:#fff}
+.hub-hd .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding-top:22px;padding-bottom:16px;flex-wrap:wrap}
+.hub-hd .crumb{font-size:12px;opacity:.8;margin-bottom:4px}
+.hub-hd .crumb a{cursor:pointer;text-decoration:underline}
+.hub-hd h1{font-family:var(--cond);font-weight:800;font-size:40px;text-transform:uppercase;line-height:1}
+.hub-hd .season{font-size:13px;opacity:.85;margin-top:4px}
+.hub-hd .ctl{display:flex;gap:8px;flex-wrap:wrap}
+.hub-hd .sel select{min-width:240px}
+.tabs{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:69px;z-index:40}
+.tabs .wrap{display:flex;overflow-x:auto;scrollbar-width:none}
+.tabs .wrap::-webkit-scrollbar{display:none}
+.tabs button{padding:14px 16px;font-family:var(--cond);font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:.03em;border-bottom:4px solid transparent;color:var(--muted);white-space:nowrap}
+.tabs button:hover{color:var(--ink)}
+.tabs button.on{border-bottom-color:var(--red);color:var(--ink)}
+.dates{background:#fff;border-bottom:1px solid var(--line)}
+.dates .wrap{display:flex;align-items:stretch;padding:0}
+.dates .arr{width:40px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--red-dk);flex-shrink:0}
+.dates .arr:hover{background:#f5f5f5}
+.dstrip{display:flex;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;flex:1}
+.dstrip::-webkit-scrollbar{display:none}
+.d{min-width:90px;padding:10px 6px 8px;text-align:center;border-bottom:4px solid transparent;flex-shrink:0;cursor:pointer}
+.d:hover{background:#fafafa}
+.d .dw{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted)}
+.d .dd{font-family:var(--cond);font-weight:700;font-size:18px;white-space:nowrap}
+.d .dn{font-size:10px;color:var(--muted)}
+.d.on{border-bottom-color:var(--red)}
+.d.on .dd,.d.on .dw{color:var(--red-dk)}
+.d.today .dn{color:var(--red);font-weight:700}
+.d.ps .dw{color:var(--green-dk)}
+.hub-body{display:grid;grid-template-columns:1fr 330px;gap:22px;padding-top:20px;padding-bottom:40px}
+.hub-body.full{grid-template-columns:1fr}
+.filters{display:flex;gap:6px;margin-bottom:14px;align-items:center;flex-wrap:wrap}
+.pill{border:1px solid #cfcfcf;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;background:#fff}
+.pill.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.filters .count{margin-left:auto;font-size:12px;color:var(--muted)}
+.day-h{font-family:var(--cond);font-weight:800;font-size:19px;text-transform:uppercase;margin:4px 0 10px}
+.games{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.g{background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.g:hover{box-shadow:0 4px 14px rgba(0,0,0,.08);border-color:#cfcfcf}
+.g .gh{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid #f0f0f0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.g .gh .sch{color:var(--green-dk)}
+.g .gh .net{color:var(--muted);font-weight:600}
+.g .row{display:flex;align-items:center;gap:10px;padding:9px 12px}
+.g .row .nm{font-size:14px;color:#333;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g .row .rec{font-size:11px;color:var(--muted);font-weight:400;margin-left:4px}
+.g .row .pk{font-size:12px;color:var(--muted)}
+.g .row .sc{font-family:var(--cond);font-size:24px;font-weight:800;color:var(--muted);width:34px;text-align:right}
+.g .row.win .nm{font-weight:700;color:var(--ink)}
+.g .row.win .sc{color:var(--ink)}
+.g .row .ar{width:10px;color:var(--red);font-size:12px}
+.g .gf{display:flex;justify-content:space-between;padding:8px 12px;border-top:1px solid #f0f0f0;font-size:12px}
+.g .gf a{color:var(--red-dk);font-weight:700}
+.g .gf span{color:var(--muted)}
+.empty{background:#fff;border:1px dashed #cfcfcf;border-radius:6px;padding:40px 20px;text-align:center;color:var(--muted)}
+.empty b{display:block;font-family:var(--cond);font-size:22px;color:var(--ink);text-transform:uppercase;margin-bottom:6px}
+.side .panel{margin-bottom:18px}
+.side .tbl th,.side .tbl td{padding-left:6px;padding-right:6px}.side .tbl td{font-size:12.5px}
+.ph{padding:12px 14px;border-bottom:1px solid var(--line);font-family:var(--cond);font-weight:800;font-size:18px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ph small{font-family:var(--sans);font-size:11px;color:var(--muted);font-weight:500;text-transform:none}
+.ph a{font-family:var(--sans);font-size:12px;color:var(--red-dk);font-weight:700;text-transform:none;cursor:pointer}
+.note{font-size:11px;color:var(--muted);padding:10px 14px;line-height:1.45}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{font-size:11px;color:var(--muted);text-transform:uppercase;text-align:right;padding:9px 8px;border-bottom:2px solid var(--ink);font-weight:700;white-space:nowrap}
+.tbl td{padding:9px 8px;text-align:right;border-bottom:1px solid #eee;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tbl th.l,.tbl td.l{text-align:left}
+.tbl td.c,.tbl th.c{text-align:center}
+.tbl tr:hover td{background:#fafafa}
+.tbl .pts{font-weight:800}
+.tname{display:flex;align-items:center;gap:8px;font-weight:600;white-space:normal;line-height:1.2}
+.tbl-wrap{overflow-x:auto}
+.zone td:first-child{box-shadow:inset 3px 0 0 var(--green)}
+.pos{color:var(--green-dk)}.neg{color:var(--red)}
+.demo{display:inline-block;font-size:10px;font-weight:700;background:#fff3cc;color:#8a6d00;padding:2px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:.06em;vertical-align:middle;font-family:var(--sans)}
+.real{display:inline-block;font-size:10px;font-weight:700;background:#e3f6ea;color:var(--green-dk);padding:2px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:.06em;vertical-align:middle;font-family:var(--sans)}
+.upro{background:linear-gradient(135deg,#111,#2b2b2b);color:#fff;border-radius:6px;padding:18px}
+.upro h3{font-family:var(--cond);font-size:22px;text-transform:uppercase;margin-bottom:6px}
+.upro h3 em{font-style:normal;color:var(--gold)}
+.upro p{font-size:13px;opacity:.8}
+.leaders{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.lcard{background:#fff;border:1px solid var(--line);border-radius:6px;padding:14px}
+.lcard .lb{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.lcard .v{font-family:var(--cond);font-size:40px;font-weight:800;line-height:1;margin:6px 0}
+.lcard .who{display:flex;align-items:center;gap:8px;font-weight:600}
+.vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.vc{background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.vc .th{height:150px;position:relative;display:flex;align-items:center;justify-content:center;gap:110px;background:linear-gradient(135deg,#1c1c1c,#3b0000)}
+.vc .th .play{position:absolute;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center}
+.vc .th .play:after{content:'';border-left:16px solid var(--red-dk);border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px}
+.vc .th .logo{width:44px;height:44px;opacity:.9}
+.vc .badge{position:absolute;left:10px;top:10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:3px 7px;border-radius:2px;background:var(--red);color:#fff}
+.vc .badge.rep{background:#fff;color:var(--ink)}
+.vc .b{padding:12px}
+.vc .b b{display:block;font-size:14px;margin-bottom:3px}
+.vc .b small{color:var(--muted);font-size:12px}
+/* bracket */
+.bracket{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:26px;overflow-x:auto;padding-bottom:8px}
+.rnd h4{font-family:var(--cond);font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;text-align:center}
+.rnd{display:flex;flex-direction:column}.rnd .col{display:flex;flex-direction:column;justify-content:space-around;gap:14px;flex:1}
+.bm{background:#fff;border:1px solid var(--line);border-radius:5px;overflow:hidden;position:relative}
+.bm .bt{display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:13px}
+.bm .bt+.bt{border-top:1px solid #f0f0f0}
+.bm .bt .sd{font-size:10px;color:var(--muted);width:12px}
+.bm .bt .nm{flex:1}
+.bm .bt .s{font-family:var(--cond);font-weight:800;font-size:16px;color:var(--muted)}
+.bm .bt.w{font-weight:700}
+.bm .bt.w .s{color:var(--ink)}
+.bm .bt.w:after{content:'';position:absolute;left:0;width:3px;height:34px;background:var(--red);margin-top:-1px}
+.bm .legs{font-size:10px;color:var(--muted);padding:4px 10px 6px;border-top:1px dashed #eee}
+.champ{background:linear-gradient(135deg,var(--gold),#ffe38a);border-radius:6px;padding:16px;text-align:center;margin-top:10px}
+.champ small{font-family:var(--cond);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.champ b{display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--cond);font-size:24px;margin-top:6px}
+.hist .item{display:grid;grid-template-columns:110px 1fr 1fr 1fr;gap:12px;align-items:center;padding:14px;border-bottom:1px solid #eee}
+.hist .item:last-child{border-bottom:0}
+.hist .yr{font-family:var(--cond);font-weight:800;font-size:22px}
+.hist .lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.hist .pend{color:#aaa;font-style:italic}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-start;justify-content:center;z-index:100;padding:40px 16px;overflow:auto}
+.modal.on{display:flex}
+.mbox{background:#fff;border-radius:8px;max-width:720px;width:100%;overflow:hidden}
+.mhead{background:linear-gradient(135deg,var(--red-dk),var(--red-deep));color:#fff;padding:18px 20px;position:relative}
+.mhead .x{position:absolute;right:12px;top:8px;font-size:28px;color:#fff;opacity:.85}
+.mhead .meta{font-size:12px;opacity:.85;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;padding-right:30px}
+.mscore{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;text-align:center}
+.mscore .t .logo{width:56px;height:56px;border:2px solid rgba(255,255,255,.6)}
+.mscore .t div{font-family:var(--cond);font-weight:700;font-size:19px;margin-top:6px;line-height:1.1}
+.mscore .t small{display:block;font-family:var(--sans);font-size:11px;opacity:.75;font-weight:400}
+.mscore .s{font-family:var(--cond);font-weight:800;font-size:54px;line-height:1}
+.mscore .s span{opacity:.45}
+.mscore .s small{display:block;font-size:14px;opacity:.85;font-weight:600;margin-top:4px}
+.mtabs{display:flex;border-bottom:1px solid var(--line);padding:0 12px;overflow-x:auto}
+.mtabs button{padding:12px;font-family:var(--cond);font-weight:700;font-size:15px;text-transform:uppercase;border-bottom:3px solid transparent;color:var(--muted);white-space:nowrap}
+.mtabs button.on{border-bottom-color:var(--red);color:var(--ink)}
+.mtabs button.off{opacity:.45;cursor:not-allowed}
+.mbody{padding:16px 20px 20px}
+.cmp{display:grid;grid-template-columns:54px 1fr 54px;gap:10px;align-items:center;margin:9px 0;font-size:13px}
+.cmp b{font-family:var(--cond);font-size:19px;text-align:center}
+.cmp .lb{text-align:center;font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:600;margin-bottom:3px}
+.bar{display:flex;height:7px;border-radius:4px;overflow:hidden;background:#eee}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.facts div{background:#f7f7f7;border-radius:4px;padding:10px}
+.facts small{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.05em}
+.facts b{font-size:14px}
+.ubadge{display:flex;align-items:center;gap:12px;background:#f3f5f9;color:#333;border:1px solid #e1e6ef;padding:10px 14px;border-radius:4px;font-size:12px;margin-top:10px}
+.ubadge img{height:22px;width:auto;flex-shrink:0}
+
+footer{background:var(--ink);color:#bbb;padding:28px 0;font-size:12px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+footer svg{height:40px}
+.page{display:none}.page.on{display:block}
+
+@media(max-width:980px){
+  .home-grid,.hub-body{grid-template-columns:1fr}
+  .news,.vgrid{grid-template-columns:1fr 1fr}
+  .mgrid{grid-template-columns:repeat(2,1fr)}
+  .sh-grid{grid-template-columns:1fr}
+  .bracket{grid-template-columns:repeat(3,240px)}
+}
+@media(max-width:640px){
+  .games,.news,.vgrid,.leaders{grid-template-columns:1fr}
+  .hero h1{font-size:32px}
+  .brand .wm small{display:none}
+  .sh-news{grid-template-columns:1fr}.sh-hero h2{font-size:30px}
+  .hub-hd h1{font-size:30px}
+  .mscore .s{font-size:40px}
+  .inm{grid-template-columns:1fr}.inm .medal{display:none}
+  .hist .item{grid-template-columns:1fr 1fr}
+  .facts{grid-template-columns:1fr 1fr}
+  .sbw{flex-wrap:wrap;height:auto}
+  .sb-sel{width:100%;border-right:0;padding:12px 16px 4px}
+  .sb-sel .sel,.sb-sel select{width:100%;max-width:none}
+  .tk-all br{display:none}
+  .tk-list{flex-basis:100%;order:2}
+  .tk{min-width:142px;padding:10px 14px 12px}
+  .tk .r{font-size:16px}
+  .tk-arr{display:none}
+  .tk-all{order:3;width:100%;justify-content:center;border-left:0;border-top:1px solid #e6e6e6;padding:12px 16px;font-size:16px}
+  .tabs{top:69px}
+}
+.hub-body>*,.sh-grid>*{min-width:0}
+@media(max-width:640px){.hub-hd .ctl,.hub-hd .ctl .sel,.hub-hd .ctl select{width:100%;min-width:0}.hub-hd .wrap>div:first-child{min-width:0}.sh-strip{margin-left:0}.sec-h h2{font-size:20px}}
+html,body{overflow-x:hidden}
+@media(max-width:900px){nav.main{display:none}.burger{display:flex}.hdr{height:60px}}
+@media(min-width:901px){.drawer{display:none!important}}
+</style>
+</head>
+<body>
+
+<div class="proto">Prototipo de concepto · Diseño y data por <b>UProStats</b> para la Liga Atlética Interuniversitaria</div>
+
+<header class="top">
+  <div class="wrap hdr">
+    <div class="brand" data-go="home">
+      <span class="lg"></span>
+      <div class="wm">LAI<small>Liga Atlética Interuniversitaria</small></div>
+    </div>
+    <nav class="main" id="nav">
+      <a class="live" data-go="home" data-k="home">Inicio</a>
+      <a class="live" id="navSports" data-k="sport">Deportes <span class="car"></span></a>
+      <a title="Próximamente">Videos</a>
+      <a title="Próximamente">Calendarios</a>
+      <a title="Próximamente">Noticias</a>
+      <a title="Próximamente">Estadísticas</a>
+      <a title="Próximamente">Universidades</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+  </div>
+  <div class="stripe"></div>
+  <div class="drawer" id="drawer">
+    <div class="di live" data-go="home">Inicio</div>
+    <div class="di live" id="drSports">Deportes <span class="car2"></span></div>
+    <div class="sub" id="drSub"></div>
+    <div class="di">Videos <small>Pronto</small></div>
+    <div class="di">Calendarios <small>Pronto</small></div>
+    <div class="di">Noticias <small>Pronto</small></div>
+    <div class="di">Estadísticas <small>Pronto</small></div>
+    <div class="di">Universidades <small>Pronto</small></div>
+  </div>
+  <div class="mega" id="mega"><div class="wrap"><h4>Deportes de la LAI</h4><div class="mgrid" id="mgrid"></div></div></div>
+</header>
+
+<!-- ================= HOME ================= -->
+<section class="page on" id="p-home">
+  <div class="sbar">
+    <div class="wrap sbw">
+      <div class="sb-sel"><div class="sel"><select id="homeSport"></select></div></div>
+      <div class="tk-list" id="tkList"></div>
+      <button class="tk-arr" id="tkNext" aria-label="Más partidos"></button>
+      <a class="tk-all" id="btnAll">Ver todos <br>los resultados</a>
+    </div>
+  </div>
+
+  <div class="wrap home-grid">
+    <div>
+      <div class="hero">
+        <div class="mark lg"></div>
+        <div class="txt">
+          <span class="kicker">Fútbol Masculino</span>
+          <h1>UPR Bayamón, perfecto y con valla invicta</h1>
+          <p>Tres victorias en tres partidos, 8 goles a favor y ninguno en contra. Hoy arranca una nueva jornada con cuatro partidos en agenda.</p>
+          <a class="btn" data-sport="futbol-m">Ir a Fútbol Masculino →</a>
+        </div>
+      </div>
+      <div class="news">
+        <div class="nc"><div class="img" style="background:linear-gradient(135deg,#007E11,#00984C)"><span>3×3</span></div><div class="b"><div class="sp">Baloncesto 3×3</div><h3>Los Delfines de la USC se proclaman campeones del 3×3 de la LAI</h3></div></div>
+        <div class="nc"><div class="img" style="background:linear-gradient(135deg,#8D0000,#E91D2D)"><span>3×3</span></div><div class="b"><div class="sp">Baloncesto 3×3</div><h3>Las Vaqueras de UPR Bayamón revalidan en el 3×3 femenino</h3></div></div>
+        <div class="nc"><div class="img" style="background:linear-gradient(135deg,#231F20,#4a4446)"><span>LAI</span></div><div class="b"><div class="sp">Pabellón de la Fama</div><h3>La LAI presente en la clase 2026 del Pabellón de la Fama del Deporte</h3></div></div>
+      </div>
+    </div>
+    <aside>
+      <div class="sec-h"><h2>Titulares</h2></div>
+      <ul class="panel headlines">
+        <li>Ricardo Aponte (UPRRP) lidera los goleadores con 4<small>Fútbol masculino</small></li>
+        <li>Inter golea 8-1 a la Católica<small>Fútbol masculino · 21 sep</small></li>
+        <li>UAGM aplasta 8-0 a UPR Arecibo<small>Fútbol masculino · 15 sep</small></li>
+        <li>Los Taínos de la UAGM ganan el bronce del 3×3<small>Baloncesto 3×3</small></li>
+        <li>Mensaje del Comisionado<small>LAI</small></li>
+      </ul>
+      <div class="sec-h" style="margin-top:22px"><h2>Posiciones</h2><a data-sport="futbol-m" data-tab="posiciones">Fútbol M →</a></div>
+      <div class="panel"><table class="tbl" id="miniSt"></table><div class="pbf"><span class="pby" id="pbyHome"></span></div></div>
+    </aside>
+  </div>
+
+  <div class="wrap" style="margin-bottom:30px">
+    <div class="inm">
+      <div>
+        <div class="k">Salón de los Inmortales</div>
+        <h3>Leyendas del deporte universitario</h3>
+        <p>Desde 1929, la LAI honra a los atletas, entrenadores y figuras que marcaron la historia del deporte universitario en Puerto Rico.</p>
+        <span class="btn" title="Próximamente">Conoce a los Inmortales →</span>
+      </div>
+      <div class="medal">LAI</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SPORT HUB ================= -->
+<section class="page" id="p-sport">
+  <div class="hub-hd">
+    <div class="wrap">
+      <div>
+        <div class="crumb"><a data-go="home">Inicio</a> › Deportes</div>
+        <h1 id="hubTitle"></h1>
+        <div class="season" id="hubSeason"></div>
+      </div>
+      <div class="ctl">
+        <div class="sel dark"><select id="hubSport"></select></div>
+      </div>
+    </div>
+  </div>
+  <div class="tabs"><div class="wrap" id="tabs"></div></div>
+  <div id="hubDates"></div>
+  <div class="wrap hub-body" id="hubBody"></div>
+</section>
+
+<div class="modal" id="modal"><div class="mbox" id="mbox"></div></div>
+
+<footer>
+  <div class="wrap">
+    <div style="display:flex;align-items:center;gap:12px"><span class="lg"></span><div>Liga Atlética Interuniversitaria de Puerto Rico<br>Desde 1929</div></div>
+    <div>Prototipo · Data &amp; diseño: <b style="color:var(--gold)">UProStats</b></div>
+  </div>
+</footer>
+
+<script>
+const UPLOGO='data:image/png;base64,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';
+const LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 363.69 373.82"><path fill="#fff" d="M363.69,152.54v-140A12.47,12.47,0,0,0,351.22,0H12.47A12.47,12.47,0,0,0,0,12.47v140a11.37,11.37,0,0,0,2.54,7.2L172.79,369.33a11.89,11.89,0,0,0,6.48,4.19,11.39,11.39,0,0,0,11.41-3.91L361,159.92a11.33,11.33,0,0,0,2.65-7.3"/><polygon fill="#ffd140" points="238.71 283.65 343.83 154.25 238.71 154.25 238.71 283.65"/><polygon fill="#00984c" points="221.52 154.25 142.17 154.25 142.17 304.8 181.85 353.63 221.52 304.8 221.52 154.25"/><polygon fill="#e91d2d" points="124.99 154.25 19.86 154.25 124.99 283.65 124.99 154.25"/><path fill="#231f20" d="M18.87,141.35v-7.52l1.45-.05c4.68-.17,8-.76,9.91-1.77,3.08-1.61,4.57-4.69,4.57-9.42V35.31c0-4.68-1.41-7.71-4.31-9.25-1.25-.69-4-1.58-10.2-1.92l-1.42-.08v-7.5h66v7.53l-1.45,0c-8.71.28-12.31,1.66-13.8,2.77s-3,4-3,12.19v85.17c0,3.42.81,5.66,2.42,6.65,1.26.78,4.26,1.71,11.4,1.71,10.51,0,19.43-2.33,26.51-6.93S120.16,112,125.36,98.48l.37-1h8.1L126,141.35Z"/><path fill="#231f20" d="M206.38,141.35v-7.52l1.44-.06c7.05-.28,9.91-.91,11.06-1.38.46-.19,1.85-.76,1.85-4.42a21.26,21.26,0,0,0-1.33-6c-.57-1.64-1.36-3.69-2.34-6l-4.19-10H174.43c-2.43,6.58-4,10.95-4.74,13-1.52,4.44-2.29,7.69-2.29,9.62,0,1.2.43,2.95,4.17,4.21a33.37,33.37,0,0,0,8.78,1l1.48,0v7.56H142.05v-7.48l1.4-.09a12,12,0,0,0,9.36-5.28c1.63-2.19,4-7.17,7.13-14.82L200.35,14.1h7L248,109.7c4.45,10.46,7.8,17.28,10,20.25a9,9,0,0,0,7.84,3.83h.41l1.54,0v7.62ZM209,95.85,193.13,57.78,178.28,95.85Z"/><path fill="#231f20" d="M278.84,141.35v-7.54l1.47,0c4.86-.11,8.34-.68,10.36-1.69,3.11-1.6,4.63-4.71,4.63-9.48V35.31c0-4.74-1.43-7.79-4.39-9.33-1.91-1-5.48-1.62-10.63-1.84l-1.43-.06V16.56h66v7.52l-1.44.06c-5.39.22-9.1.82-11,1.77-3,1.53-4.45,4.61-4.45,9.41V122.6c0,4.46,1.18,7.43,3.5,8.84,2.56,1.55,6.57,2.34,11.9,2.34h1.5v7.58Z"/></svg>`;
+document.querySelectorAll('.lg').forEach(e=>e.innerHTML=LOGO);
+document.getElementById('pbyHome').innerHTML='Powered by <img src="'+UPLOGO+'" alt="UProStats">';
+
+/* ================= DATA ================= */
+const T = {
+  UPRA:['UPR Arecibo','#1B5E20','ARE'], UAGM:['UAGM','#0D47A1','AGM'], UPRM:['UPR Mayagüez','#2E7D32','MAY'],
+  USC:['Sagrado Corazón','#C62828','USC'], UPRP:['UPR Ponce','#6A1B9A','PON'], UIPR:['Interamericana','#00695C','INT'],
+  PUPR:['Politécnica','#B71C1C','PUPR'], UPRC:['UPR Carolina','#283593','CAR'], UPRRP:['UPR Río Piedras','#AD1457','RP'],
+  PUCPR:['Católica','#E0A100','CAT'], UPRAG:['UPR Aguadilla','#4E342E','AGU'], CU:['Caribbean U.','#1565C0','CU'],
+  UCB:['U. Central Bayamón','#37474F','UCB'], UPRCA:['UPR Cayey','#EF6C00','CAY'], UPRH:['UPR Humacao','#558B2F','HUM'],
+  UPRB:['UPR Bayamón','#8D0000','BAY']
+};
+const nm=k=>T[k][0];
+const logo=(k,sz='')=>{const a=T[k][2],px=sz==='sm'?20:sz==='xs'?16:26;const fs=px*(a.length>3?.3:a.length>2?.36:.44);return `<span class="logo ${sz}" style="background:${T[k][1]};font-size:${fs}px">${a}</span>`};
+
+const SPORTS=[
+ ['futbol-m','Fútbol','M',1],['futbol-f','Fútbol','F',1],
+ ['voleibol-m','Voleibol','M'],['voleibol-f','Voleibol','F'],['baloncesto-m','Baloncesto','M'],['baloncesto-f','Baloncesto','F'],
+ ['baloncesto-3x3','Baloncesto 3×3','M/F'],['beisbol','Béisbol','M'],['softbol','Sóftbol','F'],['voleibol-playa','Voleibol de Playa','M/F'],
+ ['pista','Pista y Campo','M/F'],['campo-traviesa','Campo Traviesa','M/F'],['natacion','Natación','M/F'],['tenis','Tenis','M/F'],
+ ['tenis-mesa','Tenis de Mesa','M/F'],['judo','Judo','M/F'],['taekwondo','Taekwondo','M/F'],['lucha','Lucha Olímpica','M/F'],
+ ['pesas','Levantamiento de Pesas','M/F'],['porrismo','Porrismo y Baile','M/F']
+].map(([id,n,g,on])=>({id,n,g,on:!!on,full:g==='M'?n+' Masculino':g==='F'?n+' Femenino':n}));
+const sportOpts=sel=>SPORTS.map(s=>`<option value="${s.id}" ${s.on?'':'disabled'} ${s.id===sel?'selected':''}>${s.full}${s.on?'':' · próximamente'}</option>`).join('');
+
+/* parse "UPRB 5-0 UAGM" | "UPRM v UPRB" | "UAGM 1-1 UPRM p4-5" */
+const P=s=>{const m=s.match(/^(\w+) (\d+)-(\d+) (\w+)(?: p(\d+)-(\d+))?$/);if(m)return{h:m[1],H:+m[2],A:+m[3],a:m[4],fin:true,pH:m[5]!=null?+m[5]:null,pA:m[6]!=null?+m[6]:null};const [h,,a]=s.split(' ');return{h,a,fin:false}};
+
+const DATA={
+ 'futbol-m':{
+   season:'Temporada 2026-27 · Temporada regular', today:'2026-09-29',
+   rounds:[
+    ['2026-09-10','UPRB 5-0 UAGM|UPRA 4-3 PUCPR|UPRAG 0-10 UPRRP|UPRC 0-0 USC'],
+    ['2026-09-15','UPRA 0-8 UAGM|USC 0-1 UPRB|UIPR 1-0 UPRRP|PUCPR 7-0 UPRAG|UPRM 4-0 UPRC'],
+    ['2026-09-21','UPRA 2-4 USC|UPRB 2-0 UPRC|UIPR 8-1 PUCPR'],
+    ['2026-09-29','UPRP v UPRRP|UPRM v UPRB|UIPR v UAGM|UPRAG v USC'],
+    ['2026-09-30','UPRA v UPRC']
+   ],
+   // team, PJ,V,E,D,GF,GC,TA,TR,PTS
+   stand:[['UPRB',3,3,0,0,8,0,5,0,9],['UIPR',2,2,0,0,9,1,2,1,6],['USC',3,1,1,1,4,3,3,2,4],['UPRRP',2,1,0,1,10,1,0,0,3],['UPRM',1,1,0,0,4,0,1,0,3],['UAGM',2,1,0,1,8,5,1,0,3],['PUCPR',3,1,0,2,11,12,4,0,3],['UPRA',3,1,0,2,6,15,4,0,3],['UPRC',3,0,1,2,0,6,5,0,1],['UPRP',0,0,0,0,0,0,0,0,0],['UPRAG',2,0,0,2,0,17,3,0,0]],
+   scorers:[['Ricardo Aponte Ortiz','UPRRP',4],['Philip H. Berrios','UPRM',3],['Omar Mangual Ortiz','PUCPR',3],['Austin J. M. Greaux','UAGM',3],['Josh S. Mojica Otero','UPRB',3],['Andinson N. Caraballo','PUCPR',3],['Eduardo A. R. Alicea','PUCPR',3],['Chris J. Rios Negron','UPRA',3],['Kevin Torres Torres','UIPR',3],['Bryan Rivera Arce','UPRRP',2],['Ricardo B. Casado','UAGM',2],['Yonuel E. T. Marrero','UPRA',2],['Diego Torres Ortiz','UIPR',2],['Luis A. Lozada Morera','UAGM',2]],
+   bracket:null, // projected from standings
+   history:[['2026-27','en curso'],['2025-26',null],['2024-25',null],['2023-24',null]]
+ },
+ 'futbol-f':{
+   season:'Temporada 2025-26 · Finalizada', today:null,
+   rounds:[
+    ['2026-02-03','UPRA 0-10 UPRM'],
+    ['2026-02-11','UPRCA 0-2 UAGM|UPRC 1-0 UPRB|UIPR 3-1 UPRRP'],
+    ['2026-02-19','UPRB 0-10 PUCPR|USC 0-10 UIPR|UPRA 0-1 UPRC|UPRM 9-0 UPRCA'],
+    ['2026-02-23','UPRCA 1-1 UPRA|UPRC 1-1 USC|UIPR 5-1 UAGM|PUCPR 3-1 UPRRP'],
+    ['2026-02-27','UAGM 1-3 UPRRP|USC 0-9 PUCPR|UPRM 1-5 UIPR|UPRCA 0-2 UPRC'],
+    ['2026-03-02','UPRB 0-10 UIPR|USC 2-0 UPRCA|UAGM 5-0 UPRC'],
+    ['2026-03-05','UPRC 1-9 UPRM|UIPR 10-0 UPRA|PUCPR 2-4 UAGM'],
+    ['2026-03-09','UPRC 0-6 UIPR|UPRA 0-10 UPRRP'],
+    ['2026-03-10','USC 3-0 UPRB|UPRM 3-1 PUCPR'],
+    ['2026-03-13','UPRM 4-0 USC'],
+    ['2026-03-18','UIPR 6-0 UPRCA|PUCPR 10-0 UPRA|UPRRP 3-1 USC|UPRB 0-8 UAGM'],
+    ['2026-03-23','UPRRP 10-0 UPRB'],
+    ['2026-03-24','UAGM 0-4 UPRM'],
+    ['2026-03-26','UPRM 10-0 UPRB'],
+    ['2026-03-30','PUCPR 5-0 UPRCA|UPRRP 0-0 UPRM|UAGM 3-0 USC'],
+    ['2026-04-01','UPRC 1-6 PUCPR|UPRCA 0-1 UPRRP'],
+    ['2026-04-07','UPRA 0-10 UAGM'],
+    ['2026-04-08','PUCPR 0-5 UIPR|UPRRP 4-0 UPRC|UPRB 0-1 UPRCA'],
+    ['2026-04-10','UPRB 1-1 UPRA'],
+    ['2026-04-13','USC 4-0 UPRA'],
+    ['PS:Cuartos','PUCPR 0-1 UAGM|UPRM 5-0 UPRC|UPRRP 2-0 USC|UIPR 8-0 UPRCA|UPRC 0-5 UPRM|UPRCA 0-8 UIPR|UAGM 2-0 PUCPR|USC 1-4 UPRRP'],
+    ['PS:Semifinales','UIPR 1-1 UAGM|UPRM 3-1 UPRRP|UPRRP 1-0 UPRM|UAGM 2-2 UIPR p2-4'],
+    ['PS:Tercer lugar','UAGM 1-1 UPRM p4-5'],
+    ['PS:Final','UPRRP 0-1 UIPR']
+   ],
+   stand:[['UIPR',9,9,0,0,60,3,2,0,27],['UPRM',9,7,1,1,50,7,4,1,22],['UPRRP',9,6,1,2,33,8,2,0,19],['PUCPR',9,6,0,3,46,14,3,0,18],['UAGM',9,6,0,3,34,14,5,0,18],['USC',9,3,1,5,11,30,3,1,10],['UPRC',9,3,1,5,7,31,1,0,10],['UPRCA',9,1,1,7,2,28,2,0,4],['UPRA',9,0,2,7,2,57,6,0,2],['UPRB',9,0,1,8,1,54,1,0,1]],
+   scorers:[['Isabel A. Santos','UPRM',20],['Karish Rivera de Jesús','UIPR',19],['Fabiola Martínez D. V','PUCPR',17],['Lara Soto Vega','UIPR',15],['Denis G. Rincón','UAGM',14]],
+   bracket:{
+     qf:[['UIPR','UPRCA','8-0 · 8-0'],['UAGM','PUCPR','1-0 · 2-0'],['UPRM','UPRC','5-0 · 5-0'],['UPRRP','USC','2-0 · 4-1']],
+     sf:[['UIPR','UAGM','1-1 · 2-2 (pen. 4-2)'],['UPRRP','UPRM','1-3 · 1-0']],
+     f:['UIPR','UPRRP','1-0'], third:['UPRM','UAGM','1-1 (pen. 5-4)']
+   },
+   history:[['2025-26',{c:'UIPR',s:'UPRRP',t:'UPRM',g:'Isabel A. Santos (UPRM) · 20'}],['2024-25',null],['2023-24',null],['2022-23',null]]
+ }
+};
+
+/* build games with running records */
+let GID=0; const ALL={};
+for(const [sid,D] of Object.entries(DATA)){
+  const rec={}; const R=k=>rec[k]||(rec[k]=[0,0,0]);
+  D.rounds=D.rounds.map(([key,str])=>{
+    const ps=key.startsWith('PS:');
+    const games=str.split('|').map(s=>{
+      const g=P(s); g.id=GID++; g.sid=sid; g.key=key; g.ps=ps;
+      if(g.fin&&!ps){ if(g.H>g.A){R(g.h)[0]++;R(g.a)[1]++} else if(g.A>g.H){R(g.a)[0]++;R(g.h)[1]++} else {R(g.h)[2]++;R(g.a)[2]++} }
+      g.rh=[...R(g.h)]; g.ra=[...R(g.a)]; ALL[g.id]=g; return g;
+    });
+    return {key,ps,label:ps?key.slice(3):null,games};
+  });
+}
+
+/* ================= HELPERS ================= */
+const MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const MESL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DIA=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'], DIAL=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const pd=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const recStr=r=>`${r[0]}-${r[1]}-${r[2]}`;
+const winner=g=>!g.fin?null:g.H>g.A?'h':g.A>g.H?'a':g.pH!=null?(g.pH>g.pA?'h':'a'):null;
+const sp=id=>SPORTS.find(s=>s.id===id);
+const PBY='<span class="pby">Powered by <img src="'+UPLOGO+'" alt="UProStats"></span>', PBF='<div class="pbf">'+PBY+'</div>';
+
+/* ================= STATE / ROUTING ================= */
+const S={page:'home',sport:'futbol-m',tab:'resultados',round:null,filt:'all',homeSport:'futbol-m'};
+const TABS=[['inicio','Inicio'],['resultados','Resultados'],['rankings','Rankings'],['bracket','Bracket'],['posiciones','Posiciones'],['estadisticas','Estadísticas'],['videos','Videos'],['historial','Historial']];
+
+function defaultRound(sid){const D=DATA[sid];if(D.today){const r=D.rounds.find(r=>r.key===D.today);if(r)return r.key}return D.rounds[D.rounds.length-1].key}
+function goSport(sid,tab='resultados'){S.page='sport';S.sport=sid;S.tab=tab;S.round=defaultRound(sid);S.filt='all';closeMega();closeDrawer();render();window.scrollTo(0,0)}
+function goHome(){S.page='home';closeMega();closeDrawer();render();window.scrollTo(0,0)}
+
+function render(){
+  document.getElementById('p-home').classList.toggle('on',S.page==='home');
+  document.getElementById('p-sport').classList.toggle('on',S.page==='sport');
+  document.querySelectorAll('#nav a[data-k]').forEach(a=>a.classList.toggle('on',a.dataset.k===S.page));
+  document.querySelectorAll('#drawer .di[data-go]').forEach(a=>a.classList.toggle('on',S.page==='home'));
+  document.getElementById('drSports').classList.toggle('on',S.page==='sport');
+  if(S.page==='home') renderHome(); else renderHub();
+}
+
+/* ================= MEGA MENU ================= */
+document.getElementById('mgrid').innerHTML=SPORTS.map(s=>`<div class="ms ${s.on?'live':''}" ${s.on?`data-sport="${s.id}"`:'title="Próximamente"'}><span>${s.n}</span><small>${s.g==='M'?'Masculino':s.g==='F'?'Femenino':'M / F'}</small></div>`).join('');
+const mega=document.getElementById('mega'), navS=document.getElementById('navSports');
+function closeMega(){mega.classList.remove('on');navS.classList.remove('open')}
+navS.addEventListener('click',e=>{e.stopPropagation();mega.classList.toggle('on');navS.classList.toggle('open')});
+
+/* ================= HOME ================= */
+const homeSel=document.getElementById('homeSport');
+homeSel.innerHTML=sportOpts(S.homeSport);
+homeSel.onchange=()=>{S.homeSport=homeSel.value;renderHome()};
+document.getElementById('btnAll').onclick=()=>goSport(S.homeSport);
+document.getElementById('tkNext').onclick=()=>{const l=document.getElementById('tkList');l.scrollLeft+=l.clientWidth*.8};
+/* burger / drawer */
+const burger=document.getElementById('burger'), drawer=document.getElementById('drawer');
+document.getElementById('drSub').innerHTML=SPORTS.map(s=>`<div class="ms ${s.on?'live':''}" ${s.on?`data-sport="${s.id}"`:''}><span>${s.n}</span><small>${s.g==='M'?'Masculino':s.g==='F'?'Femenino':'M / F'}</small></div>`).join('');
+function closeDrawer(){drawer.classList.remove('on');burger.classList.remove('on')}
+burger.addEventListener('click',e=>{e.stopPropagation();drawer.classList.toggle('on');burger.classList.toggle('on')});
+document.getElementById('drSports').addEventListener('click',e=>{e.stopPropagation();e.currentTarget.classList.toggle('open');document.getElementById('drSub').classList.toggle('on')});
+
+function tkCard(g){
+  const w=winner(g); const lbl=g.ps?g.key.slice(3):(()=>{const d=pd(g.key);return `${DIA[d.getDay()]} ${d.getDate()} ${MES[d.getMonth()]}`})();
+  const D=DATA[g.sid]; const isToday=D.today===g.key;
+  const st=g.fin?(g.ps?`${lbl}${g.pH!=null?' · Pen.':''}`:`Final${g.pH!=null?' · Pen.':''}`):(isToday?'<span class="dot"></span>Hoy · Por jugar':lbl+' · Por jugar');
+  const row=(k,side,sc,pk)=>`<div class="r ${g.fin&&w&&w!==side?'l':''}"><span class="ab">${logo(k,'xs')}${k}</span><span class="sc">${g.fin?sc+(pk!=null?` <small style="font-size:12px;color:#8a8a8a">(${pk})</small>`:''):''}</span></div>`;
+  return `<div class="tk" data-game="${g.id}"><div class="st">${st}</div>${row(g.a,'a',g.A,g.pA)}${row(g.h,'h',g.H,g.pH)}</div>`;
+}
+function renderHome(){
+  const D=DATA[S.homeSport];
+  // recent finals + upcoming: last 3 rounds with games, up to 12 cards
+  let list=[]; for(let i=D.rounds.length-1;i>=0&&list.length<12;i--) list=[...D.rounds[i].games,...list];
+  if(D.today){ // show from last played round onward
+    const idx=D.rounds.findIndex(r=>r.key>=D.today); const from=Math.max(0,idx-1);
+    list=D.rounds.slice(from).flatMap(r=>r.games);
+  }
+  if(!D.today) list=list.reverse();
+  document.getElementById('tkList').innerHTML=list.map(tkCard).join('');
+  const M=DATA['futbol-m'].stand.slice(0,8);
+  document.getElementById('miniSt').innerHTML='<thead><tr><th class="c">#</th><th class="l">Equipo</th><th>PJ</th><th>DG</th><th>PTS</th></tr></thead><tbody>'+
+   M.map((r,i)=>`<tr><td class="c" style="color:var(--muted)">${i+1}</td><td class="l"><span class="tname">${logo(r[0],'sm')}${nm(r[0])}</span></td><td>${r[1]}</td><td>${r[5]-r[6]>0?'+':''}${r[5]-r[6]}</td><td class="pts">${r[9]}</td></tr>`).join('')+'</tbody>';
+}
+
+/* ================= HUB ================= */
+const hubSel=document.getElementById('hubSport');
+hubSel.onchange=()=>goSport(hubSel.value,S.tab);
+
+function renderHub(){
+  const s=sp(S.sport), D=DATA[S.sport];
+  document.getElementById('hubTitle').textContent=s.full;
+  document.getElementById('hubSeason').textContent='LAI · '+D.season;
+  hubSel.innerHTML=sportOpts(S.sport);
+  document.getElementById('tabs').innerHTML=TABS.map(([k,l])=>`<button class="${k===S.tab?'on':''}" data-tab="${k}">${l}</button>`).join('');
+  document.getElementById('hubDates').innerHTML = S.tab==='resultados'?datesHTML():'';
+  const body=document.getElementById('hubBody');
+  body.classList.toggle('full',!['resultados'].includes(S.tab));
+  body.innerHTML=({inicio:tabHome,resultados:tabResults,rankings:tabRankings,bracket:tabBracket,posiciones:tabStandings,estadisticas:tabStats,videos:tabVideos,historial:tabHistory})[S.tab]();
+  if(S.tab==='resultados'){const el=document.getElementById('dstrip'),on=el&&el.querySelector('.on'); if(on) el.scrollLeft=on.offsetLeft-el.clientWidth/2+on.clientWidth/2;}
+}
+
+function datesHTML(){
+  const D=DATA[S.sport];
+  const items=D.rounds.map(r=>{
+    const n=r.games.length;
+    if(r.ps) return `<div class="d ps ${r.key===S.round?'on':''}" data-round="${r.key}"><div class="dw">Postemporada</div><div class="dd">${r.label.toUpperCase()}</div><div class="dn">${n} ${n===1?'juego':'juegos'}</div></div>`;
+    const d=pd(r.key), today=D.today===r.key;
+    return `<div class="d ${r.key===S.round?'on':''} ${today?'today':''}" data-round="${r.key}"><div class="dw">${DIA[d.getDay()]}</div><div class="dd">${MES[d.getMonth()].toUpperCase()} ${d.getDate()}</div><div class="dn">${today?'Hoy · ':''}${n} ${n===1?'juego':'juegos'}</div></div>`;
+  }).join('');
+  return `<div class="dates"><div class="wrap"><button class="arr" data-step="-1" aria-label="Anterior">‹</button><div class="dstrip" id="dstrip">${items}</div><button class="arr" data-step="1" aria-label="Siguiente">›</button></div></div>`;
+}
+
+function gameCard(g){
+  const w=winner(g), D=DATA[g.sid], today=D.today===g.key;
+  const head=g.fin?`<span>${g.ps?'Resultado final':'Final'}${g.pH!=null?' · Penales':''}</span>`:`<span class="sch">${today?'Hoy · ':''}Programado</span>`;
+  const row=(k,side,sc,pk,r)=>`<div class="row ${w===side?'win':''}">${logo(k)}<span class="nm">${nm(k)}${g.ps?'':`<span class="rec">(${recStr(r)})</span>`}</span>${pk!=null?`<span class="pk">(${pk})</span>`:''}<span class="sc">${g.fin?sc:''}</span><span class="ar">${w===side?'◂':''}</span></div>`;
+  return `<div class="g" data-game="${g.id}">
+    <div class="gh">${head}<span class="net">${g.ps?g.key.slice(3):'LAI · '+sp(g.sid).full}</span></div>
+    ${row(g.a,'a',g.A,g.pA,g.ra)}${row(g.h,'h',g.H,g.pH,g.rh)}
+    <div class="gf"><span>${nm(g.h)} (local)</span><a>${g.fin?'Resumen →':'Previa →'}</a></div></div>`;
+}
+
+const NEWS={
+ 'futbol-m':{hero:['UPR Bayamón, perfecto y con valla invicta','Tres victorias en tres partidos, 8 goles a favor y ninguno en contra. Bayamón lidera la tabla con 9 puntos.'],
+   items:[['Goleo','Ricardo Aponte (UPRRP) lidera los goleadores con 4','UPRRP'],['Resultados','Inter golea 8-1 a la Católica y sigue perfecta','UIPR'],['Resultados','UAGM aplasta 8-0 a UPR Arecibo','UAGM'],['Resultados','Río Piedras abre la temporada con un 10-0 en Aguadilla','UPRRP'],['Hoy','Bayamón visita a Mayagüez en duelo de invictos','UPRB'],['Resultados','Sagrado Corazón vence 4-2 a Arecibo','USC']]},
+ 'futbol-f':{hero:['Interamericana, campeona 2025-26','Interamericana cerró una temporada perfecta en la fase regular (9-0-0) y ganaron la final 1-0 ante UPR Río Piedras.'],
+   items:[['Final','Interamericana vence 1-0 a Río Piedras y se corona','UIPR'],['3er lugar','Mayagüez se queda con el bronce en penales ante UAGM','UPRM'],['Goleo','Isabel A. Santos (UPRM), campeona de goleo con 20','UPRM'],['Semifinales','Río Piedras elimina a Mayagüez','UPRRP'],['Temporada','Inter termina invicta con 60 goles a favor','UIPR'],['Próxima temporada','Calendario de fútbol femenino 2026-27, por anunciar','UPRRP']]}
+};
+function tabHome(){
+  const D=DATA[S.sport], N=NEWS[S.sport], f=sp(S.sport).g==='F';
+  const gs=D.rounds.flatMap(r=>r.games); let strip;
+  if(D.today){const i=D.rounds.findIndex(r=>r.key>=D.today);strip=D.rounds.slice(Math.max(0,i-1)).flatMap(r=>r.games)} else strip=gs.slice(-8);
+  const nc=(it,i)=>`<div class="nc"><div class="img" style="background:linear-gradient(135deg,${T[it[2]][1]},#111)"><span style="font-size:34px">${T[it[2]][2]}</span></div><div class="b"><div class="sp">${it[0]}</div><h3>${it[1]}</h3></div></div>`;
+  return `<div>
+    <div class="sec-h"><h2>Resultados recientes</h2><a data-tab="resultados">Ver todos →</a></div>
+    <div class="sh-strip">${strip.map(tkCard).join('')}</div>
+    <div class="sh-grid">
+      <div>
+        <div class="sh-hero ${f?'f':''}"><div class="mark lg">${LOGO}</div><div class="txt"><span class="kicker">${sp(S.sport).full}</span><h2>${N.hero[0]}</h2><p>${N.hero[1]}</p></div></div>
+        <div class="sh-news">${N.items.slice(0,3).map(nc).join('')}</div>
+        <div class="sec-h" style="margin-top:22px"><h2>Más noticias</h2></div>
+        <ul class="panel headlines">${N.items.slice(3).map(it=>`<li>${it[1]}<small>${it[0]} · ${sp(S.sport).full}</small></li>`).join('')}</ul>
+      </div>
+      <aside class="side">
+        <div class="panel"><div class="ph">Posiciones <a data-tab="posiciones">Ver tabla →</a></div>${standTable(true)}${PBF}</div>
+        <div class="panel"><div class="ph">Goleadores <a data-tab="estadisticas">Ver todos →</a></div>${scorersTable(5)}${PBF}</div>
+      </aside>
+    </div></div>`;
+}
+function tabResults(){
+  const D=DATA[S.sport], r=D.rounds.find(x=>x.key===S.round);
+  let list=r.games; if(S.filt==='final')list=list.filter(g=>g.fin); if(S.filt==='sched')list=list.filter(g=>!g.fin);
+  let title; if(r.ps) title='Postemporada · '+r.label; else {const d=pd(r.key); title=`${DIAL[d.getDay()]}, ${d.getDate()} de ${MESL[d.getMonth()]} ${d.getFullYear()}`}
+  return `<div>
+    <div class="filters">${[['all','Todos'],['final','Finales'],['sched','Programados']].map(([k,l])=>`<button class="pill ${S.filt===k?'on':''}" data-filt="${k}">${l}</button>`).join('')}<span class="count">${list.length} ${list.length===1?'partido':'partidos'}</span></div>
+    <div class="day-h">${title}</div>
+    <div class="games">${list.length?list.map(gameCard).join(''):`<div class="empty" style="grid-column:1/-1"><b>Sin partidos</b>No hay juegos en este filtro para esta fecha.</div>`}</div>
+  </div>
+  <aside class="side">
+    <div class="panel"><div class="ph">Posiciones <a data-tab="posiciones">Ver tabla →</a></div>${standTable(true)}${PBF}</div>
+    <div class="panel"><div class="ph">Goleadores <a data-tab="estadisticas">Ver todos →</a></div>${scorersTable(5)}${PBF}</div>
+  </aside>`;
+}
+
+function standTable(mini){
+  const D=DATA[S.sport];
+  const head=mini?'<tr><th class="c">#</th><th class="l">Equipo</th><th>PJ</th><th>V-E-D</th><th>PTS</th></tr>'
+    :'<tr><th class="c">#</th><th class="l">Equipo</th><th>PJ</th><th>V</th><th>E</th><th>D</th><th>GF</th><th>GC</th><th>DG</th><th title="Tarjetas amarillas">TA</th><th title="Tarjetas rojas">TR</th><th>PTS</th></tr>';
+  const rows=D.stand.map((r,i)=>{const dg=r[5]-r[6];
+    return mini?`<tr class="${i<8?'zone':''}"><td class="c" style="color:var(--muted)">${i+1}</td><td class="l"><span class="tname">${logo(r[0],'sm')}${nm(r[0])}</span></td><td>${r[1]}</td><td>${r[2]}-${r[3]}-${r[4]}</td><td class="pts">${r[9]}</td></tr>`
+    :`<tr class="${i<8?'zone':''}"><td class="c" style="color:var(--muted)">${i+1}</td><td class="l"><span class="tname">${logo(r[0],'sm')}${nm(r[0])}</span></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td class="${dg>0?'pos':dg<0?'neg':''}">${dg>0?'+':''}${dg}</td><td>${r[7]}</td><td>${r[8]}</td><td class="pts">${r[9]}</td></tr>`}).join('');
+  return `<div class="tbl-wrap"><table class="tbl"><thead>${head}</thead><tbody>${rows}</tbody></table></div>`;
+}
+function scorersTable(n){
+  const L=DATA[S.sport].scorers.slice(0,n||99);
+  return `<table class="tbl"><thead><tr><th class="c">#</th><th class="l">Jugador(a)</th><th class="l">Equipo</th><th>Goles</th></tr></thead><tbody>${L.map((r,i)=>`<tr><td class="c" style="color:var(--muted)">${i+1}</td><td class="l" style="font-weight:600">${r[0]}</td><td class="l"><span class="tname">${logo(r[1],'xs')}${r[1]}</span></td><td class="pts">${r[2]}</td></tr>`).join('')}</tbody></table>`;
+}
+
+function tabStandings(){
+  return `<div class="panel"><div class="ph">Tabla de posiciones <span class="real">Data oficial LAI</span></div>${standTable(false)}
+  <div class="note">PJ jugados · V-E-D victorias, empates, derrotas · GF/GC goles a favor/en contra · DG diferencia · TA/TR tarjetas amarillas/rojas · PTS puntos (3 por victoria, 1 por empate). La franja verde marca la zona de clasificación ilustrativa (top 8).</div>${PBF}</div>`;
+}
+
+function tabRankings(){
+  const D=DATA[S.sport];
+  const rows=D.stand.filter(r=>r[1]>0).map(r=>{const ppg=r[9]/r[1], gd=(r[5]-r[6])/r[1], idx=Math.round((ppg/3*70+Math.max(-15,Math.min(15,gd*3))+15)*10)/10;return {r,idx,ppg,gd}}).sort((a,b)=>b.idx-a.idx);
+  return `<div class="panel"><div class="ph">Ranking UProStats <span class="demo">Índice de muestra</span></div>
+   <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="c">Rk</th><th class="l">Equipo</th><th>Récord</th><th>Pts/PJ</th><th>DG/PJ</th><th>Índice UPS</th></tr></thead><tbody>
+   ${rows.map((x,i)=>`<tr><td class="c"><b style="font-family:var(--cond);font-size:18px">${i+1}</b></td><td class="l"><span class="tname">${logo(x.r[0],'sm')}${nm(x.r[0])}</span></td><td>${x.r[2]}-${x.r[3]}-${x.r[4]}</td><td>${x.ppg.toFixed(2)}</td><td class="${x.gd>0?'pos':x.gd<0?'neg':''}">${x.gd>0?'+':''}${x.gd.toFixed(2)}</td><td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><div style="width:90px;height:6px;background:#eee;border-radius:3px;overflow:hidden"><div style="width:${Math.max(0,x.idx)}%;height:100%;background:var(--red)"></div></div><b>${x.idx.toFixed(1)}</b></div></td></tr>`).join('')}
+   </tbody></table></div>
+   <div class="note">El Índice UPS combina puntos por partido y diferencia de goles por partido (escala 0-100). Metodología ilustrativa: el ranking final lo define UProStats con su modelo.</div>${PBF}</div>`;
+}
+
+function bm(a,b,sa,sb,wk,legs,seedA,seedB){
+  const t=(k,s,sd)=>`<div class="bt ${k===wk?'w':''}">${sd!=null?`<span class="sd">${sd}</span>`:''}${logo(k,'sm')}<span class="nm">${nm(k)}</span><span class="s">${s??''}</span></div>`;
+  return `<div class="bm">${t(a,sa,seedA)}${t(b,sb,seedB)}${legs?`<div class="legs">${legs}</div>`:''}</div>`;
+}
+function tabBracket(){
+  const D=DATA[S.sport];
+  if(D.bracket){
+    const B=D.bracket;
+    return `<div class="panel" style="padding:16px"><div class="ph" style="padding:0 0 12px;border:0">Postemporada 2025-26 <span class="real">Resultados LAI</span></div>
+     <div class="bracket">
+      <div class="rnd"><h4>Cuartos de final</h4><div class="col">${B.qf.map(m=>bm(m[0],m[1],'','',m[0],'Ida y vuelta: '+m[2])).join('')}</div></div>
+      <div class="rnd"><h4>Semifinales</h4><div class="col">${B.sf.map(m=>bm(m[0],m[1],'','',m[0],'Serie: '+m[2])).join('')}</div></div>
+      <div class="rnd"><h4>Final</h4><div class="col" style="justify-content:center">${bm(B.f[0],B.f[1],1,0,B.f[0],'Final')}
+        <div class="champ"><small>Campeonas 2025-26</small><b>${logo(B.f[0],'sm')}${nm(B.f[0])}</b></div>
+        <div style="margin-top:14px">${bm(B.third[0],B.third[1],'','',B.third[0],'3er lugar: '+B.third[2])}</div></div></div>
+     </div>
+     <div class="note" style="padding:12px 0 0">Avance según los partidos publicados por la LAI. Marcadores de serie tal como aparecen en la fuente.</div><div class="pbrow" style="margin:10px 0 0">${PBY}</div></div>`;
+  }
+  const st=D.stand.slice(0,8).map(r=>r[0]);
+  const pair=[[0,7],[3,4],[1,6],[2,5]];
+  return `<div class="panel" style="padding:16px"><div class="ph" style="padding:0 0 12px;border:0">Bracket proyectado <span class="demo">Si la temporada terminara hoy</span></div>
+    <div class="bracket">
+     <div class="rnd"><h4>Cuartos de final</h4><div class="col">${pair.map(([x,y])=>bm(st[x],st[y],'','',null,null,x+1,y+1)).join('')}</div></div>
+     <div class="rnd"><h4>Semifinales</h4><div class="col">${['Ganador C1 vs C2','Ganador C3 vs C4'].map(t=>`<div class="bm"><div class="bt" style="color:var(--muted)">Por definir</div><div class="bt" style="color:var(--muted)">Por definir</div><div class="legs">${t}</div></div>`).join('')}</div></div>
+     <div class="rnd"><h4>Final</h4><div class="col" style="justify-content:center"><div class="bm"><div class="bt" style="color:var(--muted)">Por definir</div><div class="bt" style="color:var(--muted)">Por definir</div></div><div class="champ" style="opacity:.6"><small>Campeón 2026-27</small><b>?</b></div></div></div>
+    </div>
+    <div class="note" style="padding:12px 0 0">Formato ilustrativo (top 8, 1 vs 8, 2 vs 7…). El formato oficial de postemporada lo define la LAI.</div><div class="pbrow" style="margin:10px 0 0">${PBY}</div></div>`;
+}
+
+function tabStats(){
+  const D=DATA[S.sport], st=D.stand.filter(r=>r[1]>0);
+  const top=(f,asc)=>[...st].sort((a,b)=>asc?f(a)-f(b):f(b)-f(a))[0];
+  const gf=top(r=>r[5]/r[1]), gc=top(r=>r[6]/r[1],true), ta=top(r=>r[7]), sc=D.scorers[0];
+  const lc=(lb,v,k,who)=>`<div class="lcard"><div class="lb">${lb}</div><div class="v">${v}</div><div class="who">${logo(k,'sm')}${who}</div></div>`;
+  return `<div class="pbrow">${PBY}</div><div class="leaders">
+     ${lc('Máximo goleador(a)',sc[2],sc[1],sc[0])}
+     ${lc('Mejor ofensiva · goles/PJ',(gf[5]/gf[1]).toFixed(2),gf[0],nm(gf[0]))}
+     ${lc('Mejor defensa · goles en contra/PJ',(gc[6]/gc[1]).toFixed(2),gc[0],nm(gc[0]))}
+   </div>
+   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px">
+    <div class="panel"><div class="ph">Goleadores <span class="real">Data oficial LAI</span></div>${scorersTable()}${PBF}</div>
+    <div class="panel"><div class="ph">Estadísticas de equipo</div><div class="tbl-wrap"><table class="tbl"><thead><tr><th class="l">Equipo</th><th>GF/PJ</th><th>GC/PJ</th><th>TA</th><th>TR</th></tr></thead><tbody>
+     ${st.map(r=>`<tr><td class="l"><span class="tname">${logo(r[0],'sm')}${nm(r[0])}</span></td><td>${(r[5]/r[1]).toFixed(2)}</td><td>${(r[6]/r[1]).toFixed(2)}</td><td>${r[7]}</td><td>${r[8]}</td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="note">Asistencias, tiros, posesión y estadísticas individuales se añaden con el feed de UProStats.</div>${PBF}</div>
+   </div>`;
+}
+
+function tabVideos(){
+  const D=DATA[S.sport];
+  const gs=D.rounds.flatMap(r=>r.games);
+  const up=gs.filter(g=>!g.fin), past=gs.filter(g=>g.fin).slice(-9).reverse();
+  const vc=(g,live)=>{const lbl=g.ps?g.key.slice(3):(()=>{const d=pd(g.key);return `${d.getDate()} ${MES[d.getMonth()]} ${d.getFullYear()}`})();
+    return `<div class="vc"><div class="th"><span class="badge ${live?'':'rep'}">${live?(D.today===g.key?'Hoy':'Próxima'):'Repetición'}</span>${logo(g.a)}${logo(g.h)}<span class="play"></span></div>
+    <div class="b"><b>${nm(g.a)} ${g.fin?g.A+' – '+g.H:'vs'} ${nm(g.h)}</b><small>${lbl} · ${live?'Transmisión en vivo':'Partido completo'}</small></div></div>`};
+  return `${up.length?`<div class="sec-h"><h2>Próximas transmisiones</h2></div><div class="vgrid" style="margin-bottom:24px">${up.map(g=>vc(g,true)).join('')}</div>`:''}
+   <div class="sec-h"><h2>Repeticiones</h2><span class="demo">Integración con canal LAI</span></div>
+   <div class="vgrid">${past.map(g=>vc(g,false)).join('')}</div>`;
+}
+
+function tabHistory(){
+  const D=DATA[S.sport], f=sp(S.sport).g==='F';
+  return `<div class="panel hist"><div class="ph">Historial de campeonatos · ${sp(S.sport).full}</div>
+   ${D.history.map(([y,h])=>`<div class="item"><div class="yr">${y}</div>${h==='en curso'?`<div style="grid-column:2/-1"><span class="real">Temporada en curso</span></div>`:h?`
+     <div><div class="lbl">${f?'Campeonas':'Campeón'}</div><span class="tname">${logo(h.c,'sm')}${nm(h.c)}</span></div>
+     <div><div class="lbl">Subcampeón</div><span class="tname">${logo(h.s,'sm')}${nm(h.s)}</span></div>
+     <div><div class="lbl">3er lugar · Líder goleo</div><span class="tname">${logo(h.t,'sm')}${nm(h.t)}</span><div style="font-size:11px;color:var(--muted);margin-top:3px">${h.g}</div></div>`
+     :`<div class="pend" style="grid-column:2/-1">Por integrar desde el archivo histórico de la LAI</div>`}</div>`).join('')}
+   <div class="note">El historial completo (campeones desde 1929, récords y premios) se carga desde los archivos de la LAI a la base de datos de UProStats.</div>${PBF}</div>`;
+}
+
+/* ================= MATCH MODAL ================= */
+let seed=1; const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646}; const ri=(a,b)=>a+Math.floor(rnd()*(b-a+1));
+function openGame(id){
+  const g=ALL[id], D=DATA[g.sid], M=document.getElementById('modal'), B=document.getElementById('mbox');
+  const when=g.ps?'Postemporada · '+g.key.slice(3):(()=>{const d=pd(g.key);return `${DIA[d.getDay()]} ${d.getDate()} ${MES[d.getMonth()]} ${d.getFullYear()}`})();
+  const pen=g.pH!=null?`<small>Penales ${g.pA} – ${g.pH}</small>`:'';
+  const hdr=`<div class="mhead"><button class="x" data-close>×</button>
+   <div class="meta">${sp(g.sid).full} · ${when} · ${g.fin?'Resultado final':(D.today===g.key?'Hoy · Programado':'Programado')}</div>
+   <div class="mscore">
+    <div class="t">${logo(g.a)}<div>${nm(g.a)}<small>Visitante${g.ps?'':' · '+recStr(g.ra)}</small></div></div>
+    <div class="s">${g.fin?`${g.A}<span> – </span>${g.H}`:'vs'}${pen}</div>
+    <div class="t">${logo(g.h)}<div>${nm(g.h)}<small>Local${g.ps?'':' · '+recStr(g.rh)}</small></div></div>
+   </div></div>`;
+  const stRow=k=>DATA[g.sid].stand.find(r=>r[0]===k);
+  const sa=stRow(g.a), sh=stRow(g.h);
+  const facts=`<div class="facts">
+    <div><small>Competencia</small><b>LAI ${D.season.split(' · ')[0].replace('Temporada ','')}</b></div>
+    <div><small>Sede</small><b>${nm(g.h)}</b></div>
+    <div><small>Posición en tabla</small><b>${sa?DATA[g.sid].stand.indexOf(sa)+1:'–'}º vs ${sh?DATA[g.sid].stand.indexOf(sh)+1:'–'}º</b></div></div>`;
+  if(!g.fin){
+    const cmp=(lb,a,h)=>{const t=(+a)+(+h)||1;return `<div class="cmp"><b>${a}</b><div><div class="lb">${lb}</div><div class="bar"><div style="width:${a/t*100}%;background:${T[g.a][1]}"></div><div style="width:${h/t*100}%;background:${T[g.h][1]}"></div></div></div><b>${h}</b></div>`};
+    B.innerHTML=hdr+`<div class="mtabs"><button class="on">Previa</button><button class="off">Alineaciones</button><button class="off">Transmisión</button></div><div class="mbody">${facts}
+     <div style="font-family:var(--cond);font-weight:800;font-size:17px;text-transform:uppercase;margin-bottom:4px">Cara a cara en la temporada <span class="real">Data oficial LAI</span></div><div class="pbrow" style="margin:2px 0 4px">${PBY}</div>
+     ${cmp('Puntos',sa[9],sh[9])}${cmp('Goles a favor',sa[5],sh[5])}${cmp('Goles en contra',sa[6],sh[6])}${cmp('Tarjetas amarillas',sa[7],sh[7])}
+     <div class="ubadge"><img src="${UPLOGO}" alt="UProStats"> Alineaciones, pronóstico y transmisión en vivo disponibles el día del partido.</div></div>`;
+    M.classList.add('on');return;
+  }
+  seed=500+g.id*7;
+  const pos=ri(38,62), ta=g.A+ri(3,9), th=g.H+ri(3,9);
+  const s={a:{pos:100-pos,sh:ta+ri(2,6),on:ta,co:ri(1,8),fa:ri(8,17),ye:ri(0,3)},h:{pos,sh:th+ri(2,6),on:th,co:ri(1,8),fa:ri(8,17),ye:ri(0,3)}};
+  const cmp=(lb,a,h,suf='')=>{const t=(+a)+(+h)||1;return `<div class="cmp"><b>${a}${suf}</b><div><div class="lb">${lb}</div><div class="bar"><div style="width:${a/t*100}%;background:${T[g.a][1]}"></div><div style="width:${h/t*100}%;background:${T[g.h][1]}"></div></div></div><b>${h}${suf}</b></div>`};
+  B.innerHTML=hdr+`<div class="mtabs"><button class="on">Resumen</button><button class="off">Jugadas</button><button class="off">Alineaciones</button><button class="off">Video</button></div>
+   <div class="mbody">${facts}
+    <div style="font-family:var(--cond);font-weight:800;font-size:17px;text-transform:uppercase;margin-bottom:4px">Estadísticas del partido <span class="demo">Muestra</span></div><div class="pbrow" style="margin:2px 0 4px">${PBY}</div>
+    ${cmp('Posesión',s.a.pos,s.h.pos,'%')}${cmp('Tiros',s.a.sh,s.h.sh)}${cmp('Tiros a puerta',s.a.on,s.h.on)}${cmp('Córners',s.a.co,s.h.co)}${cmp('Faltas',s.a.fa,s.h.fa)}${cmp('Amarillas',s.a.ye,s.h.ye)}
+    <div class="ubadge"><img src="${UPLOGO}" alt="UProStats"> Marcador final oficial de la LAI. Estadísticas del partido, goleadores por minuto y alineaciones son de muestra hasta conectar el feed.</div>
+   </div>`;
+  M.classList.add('on');
+}
+
+/* ================= EVENTS ================= */
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#mega')&&!e.target.closest('#navSports')) closeMega();
+  if(!e.target.closest('#drawer')&&!e.target.closest('#burger')) closeDrawer();
+  const t=e.target;
+  let x;
+  if(x=t.closest('[data-close]')||(t.id==='modal'&&t)){document.getElementById('modal').classList.remove('on');return}
+  if(x=t.closest('[data-sport]')){goSport(x.dataset.sport,x.dataset.tab||'inicio');return}
+  if(x=t.closest('[data-go]')){if(x.dataset.go==='home')goHome();return}
+  if(x=t.closest('[data-tab]')){S.tab=x.dataset.tab;renderHub();return}
+  if(x=t.closest('[data-round]')){S.round=x.dataset.round;S.filt='all';renderHub();return}
+  if(x=t.closest('[data-step]')){const R=DATA[S.sport].rounds.map(r=>r.key),i=R.indexOf(S.round)+(+x.dataset.step);if(i>=0&&i<R.length){S.round=R[i];S.filt='all';renderHub()}return}
+  if(x=t.closest('[data-filt]')){S.filt=x.dataset.filt;renderHub();return}
+  if(x=t.closest('[data-game]')){openGame(+x.dataset.game);return}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('modal').classList.remove('on');closeMega()}});
+render();
+</script>
+</body>
+</html>
